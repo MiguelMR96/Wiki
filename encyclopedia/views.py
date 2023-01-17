@@ -79,13 +79,16 @@ def new_page(request):
             })
 
 def edit(request):
-    title = request.GET['title']
+    title = request.GET.get('title', None)
     titles = get_mapping()
     file = titles.get(title.lower(), None)
     entry = util.get_entry(file)
-    print(entry)
+    if request.method == 'POST':
+        entry = util.save_entry(file, request.POST['content'])
+        entry(file)
+
     return render(request, "encyclopedia/edit.html", {
-        'title': title,
+        'title': file,
         'content': entry
     })
  
