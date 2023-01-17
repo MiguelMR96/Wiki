@@ -79,6 +79,13 @@ def new_page(request):
             })
 
 def edit(request):
-    print(request.GET)
-    return render(request, "encyclopedia/edit.html")
+    title = request.GET['title']
+    titles = get_mapping()
+    file = titles.get(title.lower(), None)
+    entry = util.get_entry(file)
+    print(entry)
+    return render(request, "encyclopedia/edit.html", {
+        'title': title,
+        'content': entry
+    })
  
