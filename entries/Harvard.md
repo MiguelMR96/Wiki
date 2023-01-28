@@ -1,2 +1,4 @@
 # Harvard
-Harvard is one of the best universities in the world         
+
+Harvard is one of the best universities in the world. **Edited**
+        

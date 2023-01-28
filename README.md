@@ -1,0 +1,2 @@
+# wiki
+Encyclopedia like wikipedia.

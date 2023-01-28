@@ -14,13 +14,21 @@ def index(request):
 def get_mapping():
     return { i.lower():i for i in util.list_entries() }
 
-def entry(request, title):
+def find_entry(title):
     titles = get_mapping()
     file = titles.get(title.lower(), None)
+    return file
+
+def convert_to_html(entry):
+    markdowner = Markdown()
+    entry = markdowner.convert(entry)
+    return entry
+
+def entry(request, title):
+    file = find_entry(title)
     entry = util.get_entry(file)
     if entry:
-        markdowner = Markdown()
-        entry = markdowner.convert(entry)
+        entry = convert_to_html(entry)
         return render(request, "encyclopedia/entry.html", {
             "title": file,
             "entry": entry
@@ -32,12 +40,10 @@ def entry(request, title):
 def search(request):
     if request.method == "POST":
         entry_name = request.POST['q']
-        titles = get_mapping()
-        file = titles.get(entry_name.lower(), None)
+        file = find_entry(entry_name)
         entry = util.get_entry(file)
         if entry:
-            markdowner = Markdown()
-            entry = markdowner.convert(entry)
+            entry = convert_to_html(entry)
             return render(request, "encyclopedia/entry.html", {
             "title": entry_name,
             "entry": entry
@@ -61,14 +67,16 @@ def new_page(request):
         return render(request, "encyclopedia/new.html")
     elif request.method == "POST":
         title = request.POST['title']
+        if not title:
+            return render(request, "encyclopedia/error.html", {
+                'error': "New page cannot be empty."
+            })
         n_entry = request.POST['new-page']
-        titles = get_mapping()
-        file = titles.get(title.lower(), None)
+        file = find_entry(n_entry)
         entry = util.get_entry(file)
         if not entry:
             util.save_entry(title, n_entry)
-            markdowner = Markdown()
-            entry = markdowner.convert(n_entry)
+            entry = convert_to_html(n_entry)
             return render(request, "encyclopedia/entry.html", {
                 'title': title,
                 'entry':  entry
@@ -79,6 +87,21 @@ def new_page(request):
             })
 
 def edit(request):
-    print(request.GET)
-    return render(request, "encyclopedia/edit.html")
+    if request.method == 'POST':
+        entry_title = request.POST['entry_title']
+        file = find_entry(entry_title)
+        entry = util.get_entry(file)
+        entry = util.save_entry(file, request.POST['content'])
+        return render(request, "encyclopedia/entry.html", {
+            'title': entry_title,
+            'content': entry,
+        })
+    else:
+        title = request.GET['title']
+        file = find_entry(title)
+        entry = util.get_entry(file)
+        return render(request, "encyclopedia/edit.html", {
+            'title': request.GET['title'],
+            'content': entry
+        })
  
