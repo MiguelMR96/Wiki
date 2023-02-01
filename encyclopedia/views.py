@@ -1,18 +1,15 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
 from . import util
 from markdown2 import Markdown
+from random import choice
+from django.urls import reverse
 
 
-def index(request):
-    return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries()
-    })
 # Returns a dic of the title entries in lower case with its original title
 # for using get_entry
 def get_mapping():
-    return { i.lower():i for i in util.list_entries() }
+    return { i.lower() : i for i in util.list_entries() }
 
 def find_entry(title):
     titles = get_mapping()
@@ -23,6 +20,11 @@ def convert_to_html(entry):
     markdowner = Markdown()
     entry = markdowner.convert(entry)
     return entry
+
+def index(request):
+    return render(request, "encyclopedia/index.html", {
+        "entries": util.list_entries()
+    })
 
 def entry(request, title):
     file = find_entry(title)
@@ -92,10 +94,7 @@ def edit(request):
         file = find_entry(entry_title)
         entry = util.get_entry(file)
         entry = util.save_entry(file, request.POST['content'])
-        return render(request, "encyclopedia/entry.html", {
-            'title': entry_title,
-            'content': entry,
-        })
+        return redirect('encyclopedia:entry', title=random_title)
     else:
         title = request.GET['title']
         file = find_entry(title)
@@ -104,4 +103,8 @@ def edit(request):
             'title': request.GET['title'],
             'content': entry
         })
- 
+
+def random(request):
+    entries = util.list_entries()
+    random_title = choice(entries)
+    return redirect('encyclopedia:entry', random_title)
