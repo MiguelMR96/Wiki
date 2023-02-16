@@ -94,7 +94,7 @@ def edit(request):
         file = find_entry(entry_title)
         entry = util.get_entry(file)
         entry = util.save_entry(file, request.POST['content'])
-        return redirect('encyclopedia:entry', title=random_title)
+        return redirect('encyclopedia:entry', title=file)
     else:
         title = request.GET['title']
         file = find_entry(title)
