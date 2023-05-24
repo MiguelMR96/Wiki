@@ -1,4 +1,4 @@
 # Harvard
 
-Harvard is one of the best universities in the world. **Edited**
+Harvard University is devoted to excellence in teaching, learning, and research, and to developing leaders who make a difference globally.
         

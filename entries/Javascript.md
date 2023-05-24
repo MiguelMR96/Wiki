@@ -1,2 +1,2 @@
 # Javascript
-Javascript is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS.
+JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.
